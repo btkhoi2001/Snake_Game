@@ -1,8 +1,5 @@
-﻿#include "snake.h"
-#include "console.h"
+﻿#include "console.h"
 #include "menu.h"
-#include <iostream>
-using namespace std;
 
 int main() {
 
@@ -10,11 +7,14 @@ int main() {
 	FixConsoleWindow();
 	NoCursorType();
 	NoVerticalScrollbar();
-
 	while (true) {
+		Clrscr();
 		DrawMenu();
 
 		int choice = SelectMenu();
+		ActiveSelect(choice);
+
+
 
 		Sleep(100000000);
 	}

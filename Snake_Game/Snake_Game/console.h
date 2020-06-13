@@ -2,6 +2,7 @@
 #include <iostream>
 #include <Windows.h>
 #include <conio.h>
+#include <thread>
 #include <string>
 #include <fstream>
 

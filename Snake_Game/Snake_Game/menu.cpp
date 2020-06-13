@@ -99,3 +99,16 @@ void DrawMenu() {
 	DrawBorderMenu();
 	DrawSnakeText();
 }
+
+// Khởi động lựa chọn
+void ActiveSelect(int choice) {
+
+	switch (choice) {
+	case 0:
+		StartGame();
+		break;
+
+	case 3:
+		exit(0);
+	}
+}

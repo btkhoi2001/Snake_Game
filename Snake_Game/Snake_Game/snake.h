@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include "console.h"
+#include "menu.h"
 
 #define MAX_SIZE_SNAKE 40
 #define MAXA_SIZE_FOOD 4
@@ -12,5 +14,11 @@ struct Point {
 	int x0, y0;
 };
 
+// Vẽ giao diện game
+void DrawGame();
 
+// Khởi tạo giá trị
+void Init();
 
+// Bắt đầu game
+void StartGame();
