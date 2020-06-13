@@ -14,6 +14,8 @@ int main() {
 	while (true) {
 		DrawMenu();
 
+		int choice = SelectMenu();
+
 		Sleep(100000000);
 	}
 

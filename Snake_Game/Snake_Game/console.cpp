@@ -1,9 +1,5 @@
 ﻿#include "console.h"
 
-// Lấy nút bàn phím do người dùng bấm
-// Trả về: mã của phím
-int inputKey();
-
 // Cố định màn hình
 void FixConsoleWindow() {
 

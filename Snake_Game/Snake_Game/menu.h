@@ -13,11 +13,25 @@
 #define WIDTH_MENU_BORDER (char)205
 #define HEIGHT_MENU_BORDER (char)186
 
+struct ListMenu {
+	string name; // Tên list;
+	int x, y; // Toạ độ (x, y);
+};
+
 // Vẽ viền menu
 void DrawBorderMenu();
 
 // Vẽ chữ Snake
 void DrawSnakeText();
+
+// Vẽ list menu
+void DrawListMenu();
+
+// Highlight lựa chọn
+void HightlightList(ListMenu listMenu[], int& choice, int nextChoice);
+
+// Chọn menu
+int SelectMenu();
 
 // Vẽ menu
 void DrawMenu();
