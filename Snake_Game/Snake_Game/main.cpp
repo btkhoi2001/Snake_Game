@@ -10,7 +10,6 @@ int main() {
 	while (true) {
 		Clrscr();
 		DrawMenu();
-
 		int choice = SelectMenu();
 		ActiveSelect(choice);
 	}

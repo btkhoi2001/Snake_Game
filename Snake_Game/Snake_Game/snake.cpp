@@ -53,7 +53,7 @@ bool IsValid(Point snake[], int snakeSize, int x, int y) {
 	return true;
 }
 
-// Tạo toạ độ food
+// Tạo food
 void GenerateFood(Point snake[], Point& food, int snakeSize) {
 
 	int x, y;
@@ -66,6 +66,84 @@ void GenerateFood(Point snake[], Point& food, int snakeSize) {
 
 	food.x = x;
 	food.y = y;
+}
+
+// Tạo cổng
+void GenerateGate(Point snake[], Point gate[], int snakeSize) {
+
+	while (true) {
+		srand(time(0));
+		int x = 3 + rand() % (WIDTH_GAME - 3);
+		int y = 3 + rand() % (HEIGHT_GAME - 3);
+		int side = rand() % 5;
+
+		switch (side) {
+		case TOP:
+			for (int i = 0; i < 3; i++) {
+				if (IsValid(snake, snakeSize, x, y) && IsValid(snake, snakeSize, x, y + 1)) {
+					gate[i].x = x;
+					gate[i].y = y;
+					gate[i + 3].x = x++;
+					gate[i + 3].y = y + 1;
+					if (i == 2) {
+						gate[GATE_CENTER].x0 = gate[GATE_CENTER].x;
+						gate[GATE_CENTER].y0 = gate[GATE_CENTER].y + 1;
+						return;
+					}
+				}
+				else break;
+			}
+			break;;
+		case BOTTOM:
+			for (int i = 0; i < 3; i++) {
+				if (IsValid(snake, snakeSize, x, y) && IsValid(snake, snakeSize, x, y + 1)) {
+					gate[i].x = x;
+					gate[i].y = y + 1;
+					gate[i + 3].x = x++;
+					gate[i + 3].y = y;
+					if (i == 2) {
+						gate[GATE_CENTER].x0 = gate[GATE_CENTER].x;
+						gate[GATE_CENTER].y0 = gate[GATE_CENTER].y - 1;
+						return;
+					}
+				}
+				else break;
+			}
+			break;;
+		case LEFT:
+			for (int i = 0; i < 3; i++) {
+				if (IsValid(snake, snakeSize, x, y) && IsValid(snake, snakeSize, x + 1, y)) {
+					gate[i].x = x;
+					gate[i].y = y;
+					gate[i + 3].x = x + 1;
+					gate[i + 3].y = y++;
+					if (i == 2) {
+						gate[GATE_CENTER].x0 = gate[GATE_CENTER].x + 1;
+						gate[GATE_CENTER].y0 = gate[GATE_CENTER].y;
+						return;
+					}
+				}
+				else break;
+			}
+			break;
+		case RIGHT:
+			for (int i = 0; i < 3; i++) {
+				if (IsValid(snake, snakeSize, x, y) && IsValid(snake, snakeSize, x + 1, y)) {
+					gate[i].x = x + 1;
+					gate[i].y = y;
+					gate[i + 3].x = x;
+					gate[i + 3].y = y++;
+					if (i == 2) {
+						gate[GATE_CENTER].x0 = gate[GATE_CENTER].x - 1;
+						gate[GATE_CENTER].y0 = gate[GATE_CENTER].y;
+						return;
+					}
+				}
+				else break;
+			}
+			break;
+		}
+	}
 }
 
 // Khởi tạo giá trị
@@ -92,8 +170,60 @@ void Init(Point snake[], Point& food, Point& direction, int& snakeSize, int& foo
 	GenerateFood(snake, food, snakeSize);
 }
 
+// Xoá message box 
+void DeleteMessageBox() {
+
+	for (int i = 20; i < 53; i++)
+		for (int j = 7; j < 14; j++) {
+			GotoXY(i, j);
+			cout << " ";
+		}
+}
+
+// Vẽ messagae box
+void DrawMessageBox() {
+
+	SetTextColor(WHITE_COLOR);
+	GotoXY(20, 7); cout << TOP_LEFT_BORDER;
+	GotoXY(52, 7); cout << TOP_RIGHT_BORDER;
+	GotoXY(20, 13); cout << BOTTOM_LEFT_BORDER;
+	GotoXY(52, 13); cout << BOTTOM_RIGHT_BORDER;
+
+	for (int i = 21; i < 52; i++) {
+		GotoXY(i, 7); cout << WIDTH_MENU_BORDER;
+		GotoXY(i, 13); cout << WIDTH_MENU_BORDER;
+	}
+
+	for (int i = 8; i < 13; i++) {
+		GotoXY(20, i); cout << HEIGHT_MENU_BORDER;
+		GotoXY(52, i); cout << HEIGHT_MENU_BORDER;
+	}
+}
+
+// Vẽ cổng
+void DrawGate(Point gate[], bool inGate) {
+
+	for (int i = 0; i < SIZE_GATE; i++) {
+		if (inGate) {
+			if (i != GATE_CENTER + 3) {
+				GotoXY(gate[i].x, gate[i].y);
+				cout << GATE_ICON;
+			}
+		}
+		else if (i != GATE_CENTER) {
+			GotoXY(gate[i].x, gate[i].y);
+			cout << GATE_ICON;
+		}
+
+	}
+
+}
+
+// Xoá cổng
+void DeleteGate(Point gate[]);
+
 // Vẽ snake và food;
-void DrawSnakeAndFood(Point snake[], Point& food, int& snakeSize, int& foodScore) {
+void DrawSnakeAndFood(Point snake[], Point gate[], Point& food, int& snakeSize, int& foodScore, bool inGate) {
 
 	SetTextColor(WHITE_COLOR);
 	for (int i = 1; i < snakeSize; i++) {
@@ -115,12 +245,23 @@ void DrawSnakeAndFood(Point snake[], Point& food, int& snakeSize, int& foodScore
 		snake[snakeSize].x = snake[snakeSize - 1].x0;
 		snake[snakeSize].y = snake[snakeSize - 1].y0;
 		snakeSize++;
-		GenerateFood(snake, food, snakeSize);
+		if (foodScore % 4 != 0)
+			GenerateFood(snake, food, snakeSize);
+		else {
+			GenerateGate(snake, gate, snakeSize);
+			food.x = -1;
+			food.y = -1;
+		}
 		
 	}
 
-	SetTextColor(RED_COLOR);
-	GotoXY(food.x, food.y); cout << FOOD_ICON;
+	if (food.x != -1 && food.y != -1) {
+		SetTextColor(RED_COLOR);
+		GotoXY(food.x, food.y); cout << FOOD_ICON;
+	}
+	else {
+		DrawGate(gate, inGate);
+	}
 }
 
 // Xoá snake và food
@@ -135,24 +276,33 @@ void DeleteSnakeAndFood(Point snake[], Point food, int snakeSize) {
 }
 
 // Hiệu ứng khi chết
-void DeadEffect(Point snake[], Point food, int snakeSize, int foodScore) {
+void DeadEffect(Point snake[], Point gate[], Point food, int snakeSize, int foodScore, bool inGate) {
 
 	for (int i = 0; i < 4; i++) {
 		DeleteSnakeAndFood(snake, food, snakeSize);
 		Sleep(300);
-		DrawSnakeAndFood(snake, food, snakeSize, foodScore);
+		DrawSnakeAndFood(snake, gate, food, snakeSize, foodScore, inGate);
 		Sleep(300);
 	}
 }
 
 // Di chuyển snake
-void MoveSnake(Point snake[], Point direction, int snakeSize) {
+void MoveSnake(Point snake[], Point gate[], Point direction, int snakeSize, bool& inGate) {
 
-	if (direction.x != 0 || direction.y != 0) {
-		snake[0].x0 = snake[0].x;
-		snake[0].y0 = snake[0].y;
-		snake[0].x += direction.x;
-		snake[0].y += direction.y;
+	if (direction.x != 0 || direction.y != 0) { 
+		if (snake[0].x == gate[GATE_CENTER].x0 && snake[0].y == gate[GATE_CENTER].y0) {
+			snake[0].x0 = gate[GATE_CENTER].x0;
+			snake[0].y0 = gate[GATE_CENTER].y0;
+		}
+		else {
+			snake[0].x0 = snake[0].x;
+			snake[0].y0 = snake[0].y;
+			snake[0].x += direction.x;
+			snake[0].y += direction.y;
+		}
+
+		if (snake[snakeSize - 1].x == gate[GATE_CENTER].x0 && snake[snakeSize - 1].y == gate[GATE_CENTER].y0)
+			inGate = true;
 
 		for (int i = 1; i < snakeSize; i++) {
 			snake[i].x0 = snake[i].x;
@@ -160,36 +310,6 @@ void MoveSnake(Point snake[], Point direction, int snakeSize) {
 			snake[i].x = snake[i - 1].x0;
 			snake[i].y = snake[i - 1].y0;
 		}
-	}
-}
-
-// Xoá bảng 
-void DeleteMessageBox() {
-
-	for (int i = 20; i < 53; i++)
-		for (int j = 7; j < 14; j++) {
-			GotoXY(i, j);
-			cout << " ";
-		}
-}
-
-// Vẽ bảng pause game
-void DrawMessageBox() {
-
-	SetTextColor(WHITE_COLOR);
-	GotoXY(20, 7); cout << TOP_LEFT_BORDER;
-	GotoXY(52, 7); cout << TOP_RIGHT_BORDER;
-	GotoXY(20, 13); cout << BOTTOM_LEFT_BORDER;
-	GotoXY(52, 13); cout << BOTTOM_RIGHT_BORDER;
-
-	for (int i = 21; i < 52; i++) {
-		GotoXY(i, 7); cout << WIDTH_MENU_BORDER;
-		GotoXY(i, 13); cout << WIDTH_MENU_BORDER;
-	}
-
-	for (int i = 8; i < 13; i++) {
-		GotoXY(20, i); cout << HEIGHT_MENU_BORDER;
-		GotoXY(52, i); cout << HEIGHT_MENU_BORDER;
 	}
 }
 
@@ -248,7 +368,7 @@ void GetKey(Point& direction, bool& escape) {
 }
 
 // Kiểm tra điều kiện chết
-bool EndGame(Point snake[], Point food, int snakeSize, int foodScore, bool& escape) {
+bool EndGame(Point snake[], Point gate[], Point food, int snakeSize, int foodScore, bool& escape, bool inGate) {
 
 	if (escape) {
 		DeleteMessageBox();
@@ -275,22 +395,29 @@ bool EndGame(Point snake[], Point food, int snakeSize, int foodScore, bool& esca
 	}
 
 	for (int i = 1; i < snakeSize; i++) {
-		if (snake[0].x == snake[i].x && snake[0].y == snake[i].y) {
-			DeadEffect(snake, food, snakeSize, foodScore);
+		if (snake[0].x != gate[GATE_CENTER].x0 && snake[0].y != gate[GATE_CENTER].y0 && snake[0].x == snake[i].x && snake[0].y == snake[i].y) {
+			DeadEffect(snake, gate, food, snakeSize, foodScore, inGate);
 			return true;
 		}
 	}
 
 	for (int i = 0; i < WIDTH_GAME + 3; i++) {
 		if (snake[0].x == i && (snake[0].y == 0 || snake[0].y == HEIGHT_GAME + 2)) {
-			DeadEffect(snake, food, snakeSize, foodScore);
+			DeadEffect(snake, gate, food, snakeSize, foodScore, inGate);
 			return true;
 		}
 	}
 
 	for (int i = 0; i < HEIGHT_GAME + 3; i++) {
 		if ((snake[0].x == 0 || snake[0].x == WIDTH_GAME + 2) && snake[0].y == i) {
-			DeadEffect(snake, food, snakeSize, foodScore);
+			DeadEffect(snake, gate, food, snakeSize, foodScore, inGate);
+			return true;
+		}
+	}
+
+	for (int i = 0; i < SIZE_GATE; i++) {
+		if (i != GATE_CENTER && snake[0].x == gate[i].x && snake[0].y == gate[i].y && snake[1].x != gate[GATE_CENTER].x && snake[1].y != gate[GATE_CENTER].y) {
+			DeadEffect(snake, gate, food, snakeSize, foodScore, inGate);
 			return true;
 		}
 	}
@@ -304,23 +431,18 @@ void StartGame() {
 	Clrscr();
 	DrawGame();
 
-	Point snake[MAX_SIZE_SNAKE];
+	Point snake[MAX_SIZE_SNAKE], gate[SIZE_GATE];
 	Point food, direction;
-	int snakeSize;
-	int level;
-	int foodScore;
-	int speed;
-	bool escape = false;
+	int snakeSize, level, foodScore, speed;
+	bool escape = false, inGate = false;
 
 	Init(snake, food, direction, snakeSize, foodScore, level, speed);
 
-	while (!EndGame(snake, food, snakeSize, foodScore, escape)) {
-		MoveSnake(snake, direction, snakeSize);
+	while (!EndGame(snake, gate, food, snakeSize, foodScore, escape, inGate)) {
+		MoveSnake(snake, gate, direction, snakeSize, inGate);
 		GetKey(direction, escape);
-		DrawSnakeAndFood(snake, food, snakeSize, foodScore);
-
+		DrawSnakeAndFood(snake, gate, food, snakeSize, foodScore, inGate);
 		Update(foodScore, level);
-
 		Sleep(speed);
 	}
 
