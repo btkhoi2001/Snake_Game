@@ -9,7 +9,7 @@
 #define HEIGHT_GAME 19
 #define FOOD_ICON (char)254
 
-#define SPEED_1 150
+#define SPEED_1 120
 #define SPEED_2
 #define SPEED_3
 #define SPEED_4
@@ -51,8 +51,14 @@ void DeadEffect(Point snake[], Point food, int snakeSize, int foodScore);
 // Di chuyển snake
 void MoveSnake(Point snake[], Point direction, int snakeSize);
 
-// Thay đổi hướng đi của snake
-void ChangeDirection(Point& direction);
+// Xoá message box
+void DeleteMessageBox();
+
+// Vẽ message box
+void DrawMessageBox();
+
+// Thay đổi hướng đi của snake, kiểm tra pause, save
+void GetKey(Point & direction, bool& escape);
 
 // Kiểm tra điều kiện chết
 bool EndGame(Point snake[], Point food, int snakeSize, int foodScore);

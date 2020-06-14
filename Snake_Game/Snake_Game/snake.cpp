@@ -163,8 +163,38 @@ void MoveSnake(Point snake[], Point direction, int snakeSize) {
 	}
 }
 
-// Thay đổi hướng đi của snake
-void ChangeDirection(Point& direction) {
+// Xoá bảng 
+void DeleteMessageBox() {
+
+	for (int i = 20; i < 53; i++)
+		for (int j = 7; j < 14; j++) {
+			GotoXY(i, j);
+			cout << " ";
+		}
+}
+
+// Vẽ bảng pause game
+void DrawMessageBox() {
+
+	SetTextColor(WHITE_COLOR);
+	GotoXY(20, 7); cout << TOP_LEFT_BORDER;
+	GotoXY(52, 7); cout << TOP_RIGHT_BORDER;
+	GotoXY(20, 13); cout << BOTTOM_LEFT_BORDER;
+	GotoXY(52, 13); cout << BOTTOM_RIGHT_BORDER;
+
+	for (int i = 21; i < 52; i++) {
+		GotoXY(i, 7); cout << WIDTH_MENU_BORDER;
+		GotoXY(i, 13); cout << WIDTH_MENU_BORDER;
+	}
+
+	for (int i = 8; i < 13; i++) {
+		GotoXY(20, i); cout << HEIGHT_MENU_BORDER;
+		GotoXY(52, i); cout << HEIGHT_MENU_BORDER;
+	}
+}
+
+// Thay đổi hướng đi của snake, kiểm tra pause, save
+void GetKey(Point& direction, bool& escape) {
 
 	if (_kbhit()) {
 		char key = toupper(_getch());
@@ -182,7 +212,11 @@ void ChangeDirection(Point& direction) {
 			}
 		}
 		else if (key == 'A') {
-			if (direction.x != 1) {
+			if (direction.x == 0 && direction.y == 0) {
+				direction.x = 1;
+				direction.y = 0;
+			}
+			else if (direction.x != 1) {
 				direction.x = -1;
 				direction.y = 0;
 			}
@@ -193,11 +227,52 @@ void ChangeDirection(Point& direction) {
 				direction.y = 0;
 			}
 		}
+		else if (key == 'P') {
+			DeleteMessageBox();
+			DrawMessageBox();
+			GotoXY(34, 9); cout << "PAUSE";
+			GotoXY(24, 11); cout << "Press any key to continue";
+			while (true) {
+				if (_kbhit()) {
+					_getch();
+					DeleteMessageBox();
+					DrawGame();
+					break;
+				}
+			}
+		}
+		else if (key == (char)27) {
+			escape = true;
+		}
 	}
 }
 
 // Kiểm tra điều kiện chết
-bool EndGame(Point snake[], Point food, int snakeSize, int foodScore) {
+bool EndGame(Point snake[], Point food, int snakeSize, int foodScore, bool& escape) {
+
+	if (escape) {
+		DeleteMessageBox();
+		DrawMessageBox();
+		GotoXY(31, 9); cout << "BACK TO MENU";
+		GotoXY(27, 11); cout << "Yes (Y)       No (N)";
+		while (true) {
+			if (_kbhit()) {
+				char key = toupper(_getch());
+				if (key == 'Y') {
+					DeleteMessageBox();
+					escape = true;
+					break;
+				}
+				else if (key == 'N') {
+					DeleteMessageBox();
+					DrawGame();
+					escape = false;
+					break;
+				}
+			}
+		}
+		return escape;
+	}
 
 	for (int i = 1; i < snakeSize; i++) {
 		if (snake[0].x == snake[i].x && snake[0].y == snake[i].y) {
@@ -235,13 +310,13 @@ void StartGame() {
 	int level;
 	int foodScore;
 	int speed;
-	bool endGame = false;
+	bool escape = false;
 
 	Init(snake, food, direction, snakeSize, foodScore, level, speed);
 
-	while (!EndGame(snake, food, snakeSize, foodScore)) {
+	while (!EndGame(snake, food, snakeSize, foodScore, escape)) {
 		MoveSnake(snake, direction, snakeSize);
-		ChangeDirection(direction);
+		GetKey(direction, escape);
 		DrawSnakeAndFood(snake, food, snakeSize, foodScore);
 
 		Update(foodScore, level);
@@ -249,7 +324,4 @@ void StartGame() {
 		Sleep(speed);
 	}
 
-	while(true) {
-
-	}
 }
