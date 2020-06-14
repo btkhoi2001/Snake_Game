@@ -40,6 +40,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="text.inp" />
+    <None Include="text.inp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

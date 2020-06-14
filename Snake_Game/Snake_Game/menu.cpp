@@ -3,6 +3,7 @@
 // Vẽ viền menu
 void DrawBorderMenu() {
 
+	SetTextColor(WHITE_COLOR);
 	GotoXY(0, 0); cout << TOP_LEFT_BORDER;
 	GotoXY(WIDTH_MENU - 1, 0); cout << TOP_RIGHT_BORDER;
 	GotoXY(0, HEIGHT_MENU - 1); cout << BOTTOM_LEFT_BORDER;

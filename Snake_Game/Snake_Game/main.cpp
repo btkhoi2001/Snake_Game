@@ -13,10 +13,6 @@ int main() {
 
 		int choice = SelectMenu();
 		ActiveSelect(choice);
-
-
-
-		Sleep(100000000);
 	}
 
 	return 0;

@@ -67,24 +67,6 @@ void GotoXY(int x, int y) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-// Lấy toạ độ x hiện tại của con trỏ console
-int WhereX() {
-
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
-		return csbi.dwCursorPosition.X;
-	return -1;
-}
-
-// Lấy toạ độ y hiện tại của con trỏ console
-int WhereY() {
-
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
-		return csbi.dwCursorPosition.Y;
-	return -1;
-}
-
 // Đổi màu chữ
 void SetTextColor(int color) {
 

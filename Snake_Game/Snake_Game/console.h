@@ -2,14 +2,14 @@
 #include <iostream>
 #include <Windows.h>
 #include <conio.h>
-#include <thread>
+#include <ctime>
 #include <string>
 #include <fstream>
 
 using namespace std;
 
 #define BLACK_COLOR 0
-#define DARK_BLUE_COLR 1
+#define DARK_BLUE_COLOR 1
 #define DARK_GREEN_COLOR 2
 #define DARK_CYAN_COLOR 3
 #define DARK_RED_COLOR 4
@@ -42,12 +42,6 @@ void Clrscr();
 
 // Di chuyển con trỏ console đến vị trí có toạ độ (x, y)
 void GotoXY(int x, int y);
-
-// Lấy toạ độ x hiện tại của con trỏ console
-int WhereX();
-
-// Lấy toạ độ y hiện tại của con trỏ console
-int WhereY();
 
 // Đổi màu chữ
 void SetTextColor(int color);
