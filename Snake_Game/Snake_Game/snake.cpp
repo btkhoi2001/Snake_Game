@@ -154,7 +154,7 @@ void Init(Point snake[], Point& food, Point& direction, int& snakeSize, int& foo
 	level = 1;
 	direction.x = 0;
 	direction.y = 0;
-	speed = SPEED_1;
+	speed = 120;
 
 	char snakeName[] = "18120371191204891912050219120549";
 	for (int i = 0; i < MAX_SIZE_SNAKE; i++)
@@ -232,6 +232,14 @@ void DeleteGate(Point gate[]) {
 
 // Vẽ snake và food;
 void DrawSnakeAndFood(Point snake[], Point gate[], Point& food, int& snakeSize, int& speed, int& level, int& foodScore, bool& inGate) {
+
+	if (inGate && snake[snakeSize - 1].x != gate[GATE_CENTER].x0 && snake[snakeSize - 1].y != gate[GATE_CENTER].y0) {
+		inGate = false;
+		level++;
+		speed -= 10;
+		GenerateFood(snake, food, snakeSize);
+		DeleteGate(gate);
+	}
 
 	SetTextColor(WHITE_COLOR);
 	for (int i = 1; i < snakeSize; i++) {

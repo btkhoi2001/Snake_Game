@@ -12,11 +12,6 @@
 #define GATE_ICON (char)219
 #define GATE_CENTER 1
 
-#define SPEED_1 120
-#define SPEED_2
-#define SPEED_3
-#define SPEED_4
-
 // Hướng Đi vào cổng
 enum GateSide {TOP, LEFT, RIGHT, BOTTOM};
 
