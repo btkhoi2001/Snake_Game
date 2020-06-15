@@ -28,6 +28,12 @@ struct Point {
 // Vẽ giao diện game
 void DrawGame();
 
+// Lưu dữ liệu thành file save
+void SaveGame(Point snake[], Point gate[], Point food, int snakeSize, int foodScore, int level, int speed);
+
+// Đọc dữ liệu từ file save
+void LoadGame(Point snake[], Point gate[], Point& food, int& snakeSize, int& foodScore, int& level, int& speed, string fileName);
+
 // Câp nhật điểm số
 void Update(int foodScore, int level);
 
@@ -41,7 +47,7 @@ void GenerateFood(Point snake[], Point& food, int snakeSize);
 void GenerateGate(Point snake[], Point gate[], int snakeSize);
 
 // Khởi tạo giá trị
-void Init(Point snake[], Point& food, Point& direction, int& snakeSize, int& foodScore, int& level, int& speed);
+void Init(Point snake[], Point gate[], Point& food, Point& direction, int& snakeSize, int& foodScore, int& level, int& speed, string fileName);
 
 // Xoá message box
 void DeleteMessageBox();
@@ -68,7 +74,7 @@ void DeadEffect(Point snake[], Point gate[], Point food, int snakeSize, int spee
 void MoveSnake(Point snake[], Point gate[], Point direction, int snakeSize, bool& inGate);
 
 // Thay đổi hướng đi của snake, kiểm tra pause, save
-void GetKey(Point & direction, bool& escape);
+void GetKey(Point & direction, bool& escape, bool& save);
 
 // Kiểm tra điều kiện chết
 bool EndGame(Point snake[], Point gate[], Point food, int snakeSize, int speed, int level, int foodScore, bool& escape, bool inGate);

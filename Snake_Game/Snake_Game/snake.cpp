@@ -35,6 +35,81 @@ void DrawGame() {
 	GotoXY(78, 19); cout << "BACK TO MENU:       ESC";
 }
 
+// Lưu dữ liệu thành file save
+void SaveGame(Point snake[], Point gate[], Point food, int snakeSize, int foodScore, int level, int speed) {
+	
+	DeleteMessageBox();
+	DrawMessageBox();
+	
+	SetTextColor(WHITE_COLOR);
+	GotoXY(22, 10); cout << TOP_LEFT_BORDER;
+	GotoXY(50, 10); cout << TOP_RIGHT_BORDER;
+	GotoXY(22, 12); cout << BOTTOM_LEFT_BORDER;
+	GotoXY(50, 12); cout << BOTTOM_RIGHT_BORDER;
+
+	for (int i = 23; i < 50; i++) {
+		GotoXY(i, 10); cout << WIDTH_MENU_BORDER;
+		GotoXY(i, 12); cout << WIDTH_MENU_BORDER;
+	}
+
+	for (int i = 11; i < 12; i++) {
+		GotoXY(22, i); cout << HEIGHT_MENU_BORDER;
+		GotoXY(50, i); cout << HEIGHT_MENU_BORDER;
+	}
+
+	GotoXY(34, 9); cout << "NAME";
+
+	string fileOutputName = ".txt";
+
+	while (true) {
+		if (_kbhit()) {
+			char key = _getch();
+			if (key == ENTER) {
+				break;
+			}
+			else if (key == BACKSPACE) {
+				if (fileOutputName.length() > 4)
+					fileOutputName.erase(fileOutputName.length() - 5, 1);
+			}
+			else {
+				if (fileOutputName.length() < 20)
+					fileOutputName.insert(fileOutputName.length() - 4, 1, key);
+			}
+		}
+
+		GotoXY(24, 11);
+		cout << fileOutputName << "      ";
+	}
+
+	ofstream fileOutput1(FILE_SAVE, ios::app);
+	ofstream fileOutput2(fileOutputName);
+
+	fileOutput1 << endl << fileOutputName;
+
+	fileOutput2 << snakeSize << " " << foodScore << " " << level << " " << speed << endl;
+	fileOutput2 << food.x << " " << food.y << endl;
+	for (int i = 0; i < SIZE_GATE; i++)
+		fileOutput2 << gate[i].x << " " << gate[i].y << " " << gate[i].x0 << " " << gate[i].y0 << endl;
+	for (int i = 0; i < snakeSize; i++)
+		fileOutput2 << snake[i].x << " " << snake[i].y << " " << snake[i].x0 << " " << snake[i].y0 << endl;
+
+	fileOutput1.close();
+	fileOutput2.close();
+}
+
+// Đọc dữ liệu từ file save
+void LoadGame(Point snake[], Point gate[], Point& food, int& snakeSize, int& foodScore, int& level, int& speed, string fileName) {
+
+	ifstream fileInput(fileName); 
+	fileInput >> snakeSize >> foodScore >> level >> speed;
+	fileInput >> food.x >> food.y;
+	for (int i = 0; i < SIZE_GATE; i++)
+		fileInput >> gate[i].x >> gate[i].y >> gate[i].x0 >> gate[i].y0;
+	for (int i = 0; i < snakeSize; i++) 
+		fileInput >> snake[i].x >> snake[i].y >> snake[i].x0 >> snake[i].y0;
+	fileInput.close();
+}
+
 // Câp nhật điểm số
 void Update(int foodScore, int level) {
 
@@ -147,27 +222,38 @@ void GenerateGate(Point snake[], Point gate[], int snakeSize) {
 }
 
 // Khởi tạo giá trị
-void Init(Point snake[], Point& food, Point& direction, int& snakeSize, int& foodScore, int& level, int& speed) {
+void Init(Point snake[], Point gate[], Point& food, Point& direction, int& snakeSize, int& foodScore, int& level, int& speed, string fileName) {
 
-	snakeSize = 6;
-	foodScore = 0;
-	level = 1;
+	if (fileName.empty()) {
+		snakeSize = 6;
+		foodScore = 0;
+		level = 1;
+		speed = 120;
+
+		for (int i = 0; i < SIZE_GATE; i++) {
+			gate[i].x = -1;
+			gate[i].y = -1;
+			gate[i].x0 = -1;
+			gate[i].y0 = -1;
+		}
+
+		for (int i = 0; i < snakeSize; i++) {
+			snake[i].x = 10 - i;
+			snake[i].y = 4;
+			snake[i].x0 = snake[i].x;
+			snake[i].y0 = snake[i].y;
+		}
+
+		GenerateFood(snake, food, snakeSize);
+	}
+	else
+		LoadGame(snake, gate, food, snakeSize, foodScore, level, speed, fileName);
+
 	direction.x = 0;
 	direction.y = 0;
-	speed = 120;
-
 	char snakeName[] = "18120371191204891912050219120549";
 	for (int i = 0; i < MAX_SIZE_SNAKE; i++)
 		snake[i].chr = snakeName[i];
-
-	for (int i = 0; i < snakeSize; i++) {
-		snake[i].x = 10 - i;
-		snake[i].y = 4;
-		snake[i].x0 = snake[i].x;
-		snake[i].y0 = snake[i].y;
-	}
-
-	GenerateFood(snake, food, snakeSize);
 }
 
 // Xoá message box 
@@ -335,7 +421,7 @@ void MoveSnake(Point snake[], Point gate[], Point direction, int snakeSize, bool
 }
 
 // Thay đổi hướng đi của snake, kiểm tra pause, save
-void GetKey(Point& direction, bool& escape) {
+void GetKey(Point& direction, bool& escape, bool& save) {
 
 	if (_kbhit()) {
 		char key = toupper(_getch());
@@ -382,7 +468,28 @@ void GetKey(Point& direction, bool& escape) {
 				}
 			}
 		}
-		else if (key == (char)27) { // ESC
+		else if (key == 'L') {
+			DeleteMessageBox();
+			DrawMessageBox();
+			GotoXY(32, 9); cout << "SAVE GAME";
+			GotoXY(27, 11); cout << "Yes (Y)       No (N)";
+			while (true) {
+				if (_kbhit()) {
+					char key = toupper(_getch());
+					if (key == 'Y') {
+						DeleteMessageBox();
+						save = true;
+						break;
+					}
+					else if (key == 'N') {
+						DeleteMessageBox();
+						DrawGame();
+						break;
+					}
+				}
+			}
+		}
+		else if (key == ESC) { // ESC
 			escape = true;
 		}
 	}
@@ -455,16 +562,20 @@ void StartGame(string fileName) {
 	Point snake[MAX_SIZE_SNAKE], gate[SIZE_GATE];
 	Point food, direction;
 	int snakeSize, level, foodScore, speed;
-	bool escape = false, inGate = false;
+	bool escape = false, inGate = false, save = false;
 
-	Init(snake, food, direction, snakeSize, foodScore, level, speed);
+	Init(snake, gate, food, direction, snakeSize, foodScore, level, speed, fileName);
 
 	while (!EndGame(snake, gate, food, snakeSize, speed, level, foodScore, escape, inGate)) {
 		MoveSnake(snake, gate, direction, snakeSize, inGate);
-		GetKey(direction, escape);
 		DrawSnakeAndFood(snake, gate, food, snakeSize, speed, level, foodScore, inGate);
+		GetKey(direction, escape, save);
 		Update(foodScore, level);
 		Sleep(speed);
+		if (save) {
+			SaveGame(snake, gate, food, snakeSize, foodScore, level, speed);
+			save = false;
+			escape = true;
+		}
 	}
-
 }

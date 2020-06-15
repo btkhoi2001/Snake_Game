@@ -150,7 +150,7 @@
     <ClInclude Include="snake.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="text.inp" />
+    <None Include="text.txt" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="save.txt" />

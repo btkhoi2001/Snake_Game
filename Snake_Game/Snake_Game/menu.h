@@ -17,6 +17,9 @@
 #define LEFT_RIGHT_TOP_BORDER (char)202
 #define TOP_BOTTOM_LEFT_BORDER (char)185
 #define TOP_BOTTOM_RIGHT_BORDER (char)204
+#define ESC (char)27
+#define BACKSPACE (char)8
+#define ENTER (char)13
 #define FILE_SAVE "save.txt"
 
 struct List {
@@ -50,6 +53,9 @@ void DrawBorderLoadMenu();
 
 // Láy tên file cần load
 string GetFileLoad();
+
+// Giới thiệu nhóm
+void ShowAbout();
 
 // Khởi động lựa chọn
 void ActiveSelect(int choice);
