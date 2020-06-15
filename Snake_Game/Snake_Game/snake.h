@@ -61,13 +61,13 @@ void DrawGate(Point gate[], bool inGate);
 void DeleteGate(Point gate[]);
 
 // Vẽ snake và food
-void DrawSnakeAndFood(Point snake[], Point gate[], Point& food, int& snakeSize, int& foodScore);
+void DrawSnakeAndFood(Point snake[], Point gate[], Point& food, int& snakeSize, int& speed, int& level, int& foodScore, bool& inGate);
 
 // Xoá snake và food
 void DeleteSnakeAndFood(Point snake[], Point food, int snakeSize);
 
 // Hiệu ứng khi chết
-void DeadEffect(Point snake[], Point gate[], Point food, int snakeSize, int foodScore, bool inGate);
+void DeadEffect(Point snake[], Point gate[], Point food, int snakeSize, int speed, int level, int foodScore, bool inGate);
 
 // Di chuyển snake
 void MoveSnake(Point snake[], Point gate[], Point direction, int snakeSize, bool& inGate);
@@ -76,6 +76,6 @@ void MoveSnake(Point snake[], Point gate[], Point direction, int snakeSize, bool
 void GetKey(Point & direction, bool& escape);
 
 // Kiểm tra điều kiện chết
-bool EndGame(Point snake[], Point gate[], Point food, int snakeSize, int foodScore, bool& escape, bool inGate);
+bool EndGame(Point snake[], Point gate[], Point food, int snakeSize, int speed, int level, int foodScore, bool& escape, bool inGate);
 // Bắt đầu game
 void StartGame();
