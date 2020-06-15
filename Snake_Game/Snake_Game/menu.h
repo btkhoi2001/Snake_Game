@@ -17,7 +17,9 @@
 #define LEFT_RIGHT_TOP_BORDER (char)202
 #define TOP_BOTTOM_LEFT_BORDER (char)185
 #define TOP_BOTTOM_RIGHT_BORDER (char)204
-struct ListMenu {
+#define FILE_SAVE "save.txt"
+
+struct List {
 	string name; // Tên list;
 	int x, y; // Toạ độ (x, y);
 };
@@ -29,16 +31,25 @@ void DrawBorderMenu();
 void DrawSnakeText();
 
 // Vẽ list menu
-void DrawListMenu();
+void DrawListMenu(vector <List> listMenu);
 
 // Highlight lựa chọn
-void HightlightList(ListMenu listMenu[], int& choice, int nextChoice);
+void HightlightList(vector <List> listMenu, int& curChoice, int nextChoice);
 
 // Chọn menu
 int SelectMenu();
 
 // Vẽ menu
 void DrawMenu();
+
+// Vẽ list file
+void DrawListFile(vector <List> listFile, int curChoice, int start, int end); 
+
+// Vẽ load menu
+void DrawBorderLoadMenu();
+
+// Láy tên file cần load
+string GetFileLoad();
 
 // Khởi động lựa chọn
 void ActiveSelect(int choice);

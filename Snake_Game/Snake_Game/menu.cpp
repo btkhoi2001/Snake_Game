@@ -42,7 +42,7 @@ void DrawSnakeText() {
 }
 
 // Vẽ list menu
-void DrawListMenu(ListMenu listMenu[]) {
+void DrawListMenu(vector <List> listMenu) {
 
 	SetTextColor(DARK_RED_COLOR);
 	GotoXY(listMenu[0].x - 4, listMenu[0].y); cout << ">> " << listMenu[0].name;
@@ -57,7 +57,7 @@ void DrawListMenu(ListMenu listMenu[]) {
 }
 
 // Highlight lựa chọn
-void HightlightList(ListMenu listMenu[], int& curChoice, int nextChoice) {
+void HightlightList(vector <List> listMenu, int& curChoice, int nextChoice) {
 
 	SetTextColor(WHITE_COLOR);
 	GotoXY(listMenu[curChoice].x - 4, listMenu[curChoice].y); cout << "               ";
@@ -71,24 +71,24 @@ void HightlightList(ListMenu listMenu[], int& curChoice, int nextChoice) {
 // Chọn menu
 int SelectMenu() {
 
-	ListMenu listMenu[] = { {"NEW GAME", 48, 11}, {"LOAD GAME", 48, 13}, {"ABOUT", 48, 15}, {"QUIT", 48, 17} };
+	vector <List> listMenu = { {"NEW GAME", 48, 11}, {"LOAD GAME", 48, 13}, {"ABOUT", 48, 15}, {"QUIT", 48, 17} };
 	DrawListMenu(listMenu);
 
-	int choice = 0;
+	int curChoice = 0;
 	int nextChoice = 0;
 	while (true) {
 		if (_kbhit()) {
 			char key = toupper(_getch());
 			if (key == 'W') {
-				nextChoice = choice == 0 ? 3 : choice - 1;
-				HightlightList(listMenu, choice, nextChoice);
+				nextChoice = curChoice == 0 ? 3 : curChoice - 1;
+				HightlightList(listMenu, curChoice, nextChoice);
 			}
 			else if (key == 'S') {
-				nextChoice = choice == 3 ? 0 : choice + 1;
-				HightlightList(listMenu, choice, nextChoice);
+				nextChoice = curChoice == 3 ? 0 : curChoice + 1;
+				HightlightList(listMenu, curChoice, nextChoice);
 			}
 			else if (key == char(13)) // Enter 
-				return choice;
+				return curChoice;
 		}
 	}
 	return -1;
@@ -101,14 +101,130 @@ void DrawMenu() {
 	DrawSnakeText();
 }
 
+// vẽ List file
+void DrawListFile(vector <List> listFile, int curChoice, int start, int end) {
+
+	SetTextColor(WHITE_COLOR);
+	for (int i = start; i <= end; i++) {
+		GotoXY(listFile[i].x, listFile[i].y);
+		cout << listFile[i].name << "          ";
+	}
+
+	SetTextColor(DARK_RED_COLOR);
+	GotoXY(listFile[curChoice].x - 4, listFile[curChoice].y); cout << ">> " << listFile[curChoice].name << "          ";
+
+	SetTextColor(WHITE_COLOR);
+	GotoXY(42, 20); cout << "press Esc to go back";
+}
+
+// Vẽ load menu
+void DrawBorderLoadMenu() {
+
+	SetTextColor(WHITE_COLOR);
+	GotoXY(30, 10); cout << TOP_LEFT_BORDER;
+	GotoXY(75, 10); cout << TOP_RIGHT_BORDER;
+	GotoXY(30, 18); cout << BOTTOM_LEFT_BORDER;
+	GotoXY(75, 18); cout << BOTTOM_RIGHT_BORDER;
+
+	for (int i = 31; i < 75; i++) {
+		GotoXY(i, 10); cout << WIDTH_MENU_BORDER;
+		GotoXY(i, 18); cout << WIDTH_MENU_BORDER;
+	}
+
+	for (int i = 11; i < 18; i++) {
+		GotoXY(30, i); cout << HEIGHT_MENU_BORDER;
+		GotoXY(75, i); cout << HEIGHT_MENU_BORDER;
+	}
+}
+
+// Láy tên file cần load
+string GetFileLoad() {
+	
+	ifstream fileInput(FILE_SAVE, ios::in);
+	vector <List> listFile;
+	while (!fileInput.eof()) {
+		string text;
+		getline(fileInput, text);
+		listFile.push_back({ text, 0, 0 });
+	}
+
+	Clrscr();
+	DrawMenu();
+	DrawBorderLoadMenu();
+
+	listFile[0].x = 50;
+	listFile[0].y = 12;
+	for (int i = 1; i < 5 && i < listFile.size(); i++) {
+		listFile[i].x = listFile[0].x;
+		listFile[i].y = listFile[i - 1].y + 1;
+	}
+
+	int curChoice = 0;
+	int nextChoice = 0;
+	int start = 0;
+	int end = listFile.size() < 4 ? listFile.size() - 1 : 4;
+
+	DrawListFile(listFile, curChoice, start, end);
+
+	while (true) {
+		if (_kbhit()) {
+			char key = toupper(_getch());
+			if (key == 'W') {
+				if (curChoice == start && curChoice > 0) {
+					curChoice--;
+					start--;
+					end--;
+					for (int i = start; i <= end; i++) {
+						listFile[i].x = listFile[i + 1].x;
+						listFile[i].y = listFile[i + 1].y;
+					}
+
+					DrawListFile(listFile, curChoice, start, end);
+				}
+				else if (curChoice != 0) {
+					HightlightList(listFile, curChoice, curChoice - 1);
+				}
+			}
+			else if (key == 'S') {
+				if (curChoice == end && curChoice < listFile.size() - 1) {
+					curChoice++;
+					start++;
+					end++;
+					for (int i = end; i >= start; i--) {
+						listFile[i].x = listFile[i - 1].x;
+						listFile[i].y = listFile[i - 1].y;
+					}
+					DrawListFile(listFile, curChoice, start, end);
+				}
+				else if (curChoice != listFile.size() - 1) {
+					HightlightList(listFile, curChoice, curChoice + 1);
+				}
+			}
+			else if (key == char(13)) // Enter 
+				return listFile[curChoice].name;
+			else if (key == 27)
+				return "***RETURN_TO_MEUNU***";
+		}
+	}
+
+	return "";
+}
+
 // Khởi động lựa chọn
 void ActiveSelect(int choice) {
 
+	string fileName = "";
+
 	switch (choice) {
 	case 0:
-		StartGame();
+		StartGame(fileName);
 		break;
-
+	case 1:
+		fileName = GetFileLoad();
+		if (fileName == "***RETURN_TO_MEUNU***")
+			break;
+		StartGame(fileName);
+		break;
 	case 3:
 		exit(0);
 	}

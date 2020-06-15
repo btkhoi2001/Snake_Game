@@ -31,7 +31,7 @@ void DrawGame() {
 	GotoXY(78, 14); cout << "MOVE LEFT:          A";
 	GotoXY(78, 15); cout << "MOVE RIGHT:         D";
 	GotoXY(78, 17); cout << "PAUSE:              P";
-	GotoXY(78, 18); cout << "SAVE:               O";
+	GotoXY(78, 18); cout << "SAVE:               L";
 	GotoXY(78, 19); cout << "BACK TO MENU:       ESC";
 }
 
@@ -233,10 +233,10 @@ void DeleteGate(Point gate[]) {
 // Vẽ snake và food;
 void DrawSnakeAndFood(Point snake[], Point gate[], Point& food, int& snakeSize, int& speed, int& level, int& foodScore, bool& inGate) {
 
-	if (inGate && snake[snakeSize - 1].x != gate[GATE_CENTER].x0 && snake[snakeSize - 1].y != gate[GATE_CENTER].y0) {
+	if (inGate && (snake[snakeSize - 1].x != gate[GATE_CENTER].x0 || snake[snakeSize - 1].y != gate[GATE_CENTER].y0)) {
 		inGate = false;
 		level++;
-		speed -= 10;
+		speed -= 15;
 		GenerateFood(snake, food, snakeSize);
 		DeleteGate(gate);
 	}
@@ -382,7 +382,7 @@ void GetKey(Point& direction, bool& escape) {
 				}
 			}
 		}
-		else if (key == (char)27) {
+		else if (key == (char)27) { // ESC
 			escape = true;
 		}
 	}
@@ -447,7 +447,7 @@ bool EndGame(Point snake[], Point gate[], Point food, int snakeSize, int speed, 
 }
 
 // Bắt đầu game
-void StartGame() {
+void StartGame(string fileName) {
 
 	Clrscr();
 	DrawGame();
