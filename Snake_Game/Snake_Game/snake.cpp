@@ -627,7 +627,7 @@ bool EndGame(Point snake[], Point gate[], Point food, int snakeSize, int speed, 
 	}
 
 	for (int i = 0; i < SIZE_GATE; i++) {
-		if ((i != GATE_CENTER && i != GATE_CENTER + 3 && snake[0].x == gate[i].x && snake[0].y == gate[i].y) || (snake[0].x == gate[GATE_CENTER].x0 && snake[0].y == gate[GATE_CENTER].y0 && (snake[0].x0 != gate[GATE_CENTER].x || snake[0].y0 != gate[GATE_CENTER].y))) {
+		if ((i != GATE_CENTER && i != GATE_CENTER + 3 && snake[0].x == gate[i].x && snake[0].y == gate[i].y) || (snake[0].x == gate[GATE_CENTER].x0 && snake[0].y == gate[GATE_CENTER].y0 && ((snake[0].x0 != gate[GATE_CENTER].x || snake[0].y0 != gate[GATE_CENTER].y) && (snake[0].x0 != gate[GATE_CENTER].x0 || snake[0].y0 != gate[GATE_CENTER].y0)))) {
 			DeadEffect(snake, gate, food, snakeSize, speed, level, foodScore, inGate);
 			return true;
 		}
