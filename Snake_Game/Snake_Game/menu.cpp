@@ -25,7 +25,7 @@ void DrawSnakeText() {
 
 	ifstream fileInput("text.txt");
 	if (fileInput.fail()) {
-		cout << "Can not read file";
+		cout << "File does not exist";
 		Sleep(5000);
 		exit(0);
 	}
@@ -104,15 +104,17 @@ void DrawMenu() {
 // vẽ List file
 void DrawListFile(vector <List> listFile, int curChoice, int start, int end) {
 
-	SetTextColor(WHITE_COLOR);
-	for (int i = start; i <= end; i++) {
-		GotoXY(listFile[i].x, listFile[i].y);
-		cout << listFile[i].name << "             ";
-	}
+	if (!listFile.empty()) {
+		SetTextColor(WHITE_COLOR);
+		for (int i = start; i <= end; i++) {
+			GotoXY(listFile[i].x, listFile[i].y);
+			cout << listFile[i].name << "             ";
+		}
 
-	if (!listFile[curChoice].name.empty()) {
-		SetTextColor(DARK_RED_COLOR);
-		GotoXY(listFile[curChoice].x - 4, listFile[curChoice].y); cout << ">> " << listFile[curChoice].name << "             ";
+		if (!listFile[curChoice].name.empty()) {
+			SetTextColor(DARK_RED_COLOR);
+			GotoXY(listFile[curChoice].x - 4, listFile[curChoice].y); cout << ">> " << listFile[curChoice].name << "             ";
+		}
 	}
 
 	SetTextColor(WHITE_COLOR);
@@ -142,8 +144,10 @@ void DrawBorderLoadMenu() {
 // Láy tên file cần load
 string GetFileLoad() {
 	
-	ifstream fileInput(FILE_SAVE, ios::in);
+	ifstream fileInput(FILE_SAVE);
 	vector <List> listFile;
+
+
 	while (!fileInput.eof()) {
 		string text;
 		getline(fileInput, text);
@@ -155,11 +159,13 @@ string GetFileLoad() {
 	DrawMenu();
 	DrawBorderLoadMenu();
 
-	listFile[0].x = 42;
-	listFile[0].y = 12;
-	for (int i = 1; i < 5 && i < listFile.size(); i++) {
-		listFile[i].x = listFile[0].x;
-		listFile[i].y = listFile[i - 1].y + 1;
+	if (!listFile.empty()) {
+		listFile[0].x = 42;
+		listFile[0].y = 12;
+		for (int i = 1; i < 5 && i < listFile.size(); i++) {
+			listFile[i].x = listFile[0].x;
+			listFile[i].y = listFile[i - 1].y + 1;
+		}
 	}
 
 	int curChoice = 0;
