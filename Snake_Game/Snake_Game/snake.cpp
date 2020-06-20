@@ -627,7 +627,7 @@ bool EndGame(Point snake[], Point gate[], Point food, int snakeSize, int speed, 
 	}
 
 	for (int i = 0; i < SIZE_GATE; i++) {
-		if ((i != GATE_CENTER && i != GATE_CENTER + 3 && snake[0].x == gate[i].x && snake[0].y == gate[i].y) || (snake[0].x == gate[GATE_CENTER].x0 && snake[0].y == gate[GATE_CENTER].y0 && snake[0].x0 != gate[GATE_CENTER].x && snake[0].y0 != gate[GATE_CENTER].y)) {
+		if ((i != GATE_CENTER && i != GATE_CENTER + 3 && snake[0].x == gate[i].x && snake[0].y == gate[i].y) || (snake[0].x == gate[GATE_CENTER].x0 && snake[0].y == gate[GATE_CENTER].y0 && (snake[0].x0 != gate[GATE_CENTER].x || snake[0].y0 != gate[GATE_CENTER].y))) {
 			DeadEffect(snake, gate, food, snakeSize, speed, level, foodScore, inGate);
 			return true;
 		}
@@ -639,46 +639,69 @@ bool EndGame(Point snake[], Point gate[], Point food, int snakeSize, int speed, 
 // Bắt đầu game
 void StartGame(string fileName) {
 
-	Clrscr();
-	DrawGame();
+	bool continueGame = false;
+	
+	do {
+		Clrscr();
+		DrawGame();
 
-	Point snake[MAX_SIZE_SNAKE], gate[SIZE_GATE];
-	Point food, direction;
-	int snakeSize, foodScore, level, speed;
-	bool inGate;
-	char charLock;
-	bool escape = false, save = false, load = false;
+		Point snake[MAX_SIZE_SNAKE], gate[SIZE_GATE];
+		Point food, direction;
+		int snakeSize, foodScore, level, speed;
+		bool inGate;
+		char charLock;
+		bool escape = false, save = false, load = false;
 
-	Init(snake, gate, food, direction, snakeSize, foodScore, level, speed, inGate, charLock, fileName);
+		Init(snake, gate, food, direction, snakeSize, foodScore, level, speed, inGate, charLock, fileName);
 
-	while (!EndGame(snake, gate, food, snakeSize, speed, level, foodScore, escape, inGate)) {
-		MoveSnake(snake, gate, direction, snakeSize, inGate);
-		DrawSnakeAndFood(snake, gate, food, snakeSize, speed, level, foodScore, inGate);
-		GetKey(direction, charLock, escape, save, load, fileName);
-		Update(foodScore, level);
-		Sleep(speed);
-		if (save) {
-			SaveGame(snake, gate, food, snakeSize, foodScore, level, speed, inGate, charLock, fileName);
-			save = false;
-			escape = true;
-			fileName = "";
+		while (!EndGame(snake, gate, food, snakeSize, speed, level, foodScore, escape, inGate)) {
+			MoveSnake(snake, gate, direction, snakeSize, inGate);
+			DrawSnakeAndFood(snake, gate, food, snakeSize, speed, level, foodScore, inGate);
+			GetKey(direction, charLock, escape, save, load, fileName);
+			Update(foodScore, level);
+			Sleep(speed);
+			if (save) {
+				SaveGame(snake, gate, food, snakeSize, foodScore, level, speed, inGate, charLock, fileName);
+				save = false;
+				escape = true;
+				fileName = "";
+			}
+			if (load) {
+				Init(snake, gate, food, direction, snakeSize, foodScore, level, speed, inGate, charLock, fileName);
+				Clrscr();
+				DrawGame();
+				load = false;
+				fileName = "";
+			}
+			if (snakeSize == MAX_SIZE_SNAKE) {
+				SetTextColor(GREEN_COLOR);
+				DeleteMessageBox;
+				DrawMessageBox;
+				GotoXY(34, 10); cout << "YOU WIN";
+				Sleep(3000);
+				Clrscr();
+				DrawGame();
+				Init(snake, gate, food, direction, snakeSize, foodScore, level, speed, inGate, charLock, fileName);
+			}
 		}
-		if (load) {
-			Init(snake, gate, food, direction, snakeSize, foodScore, level, speed, inGate, charLock, fileName);
-			Clrscr();
-			DrawGame();
-			load = false;
-			fileName = "";
+
+		DeleteMessageBox();
+		DrawMessageBox();
+		GotoXY(32, 9); cout << "CONTINUE?";
+		GotoXY(27, 11); cout << "Yes (Y)       No (N)";
+		while (true) {
+			if (_kbhit()) {
+				char key = toupper(_getch());
+				if (key == 'Y') {
+					continueGame = true;
+					break;
+				}
+				else if (key == 'N') {
+					continueGame = false;
+					break;
+				}
+			}
 		}
-		if (snakeSize == MAX_SIZE_SNAKE) {
-			SetTextColor(GREEN_COLOR);
-			DeleteMessageBox;
-			DrawMessageBox;
-			GotoXY(34, 10); cout << "YOU WIN";
-			Sleep(3000);
-			Clrscr();
-			DrawGame();
-			Init(snake, gate, food, direction, snakeSize, foodScore, level, speed, inGate, charLock, fileName);
-		}
-	}
+
+	} while (continueGame);
 }
