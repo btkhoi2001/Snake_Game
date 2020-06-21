@@ -21,7 +21,7 @@
 #define BACKSPACE (char)8
 #define ENTER (char)13
 #define FILE_SAVE "save.txt"
-
+#define FILE_TEXT "text.txt"
 struct List {
 	string name; // Tên list;
 	int x, y; // Toạ độ (x, y);
@@ -48,7 +48,7 @@ void DrawMenu();
 // Vẽ list file
 void DrawListFile(vector <List> listFile, int curChoice, int start, int end); 
 
-// Vẽ load menu
+// Vẽ viền load menu
 void DrawBorderLoadMenu();
 
 // Láy tên file cần load

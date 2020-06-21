@@ -39,7 +39,7 @@ void DrawGame() {
 // Lưu dữ liệu thành file save
 void SaveGame(Point snake[], Point gate[], Point food, int snakeSize, int foodScore, int level, int speed, bool inGate, char charLock, string fileName) {
 
-	ofstream fileOutput(fileName);
+	ofstream fileOutput(fileName, ios::trunc);
 
 	fileOutput << snakeSize << " " << foodScore << " " << level << " " << speed << endl;
 	fileOutput << inGate << " " << charLock << endl;
@@ -464,7 +464,8 @@ void GetKey(Point& direction, char& charLock, bool& escape, bool& save, bool& lo
 							if (_kbhit()) {
 								char key = _getch();
 								if (key == ENTER) {
-									break;
+									if (fileOutputName != FILE_TEXT && fileOutputName != FILE_SAVE)
+										break;
 								}
 								else if (key == BACKSPACE) {
 									if (fileOutputName.length() > 4)
@@ -480,9 +481,22 @@ void GetKey(Point& direction, char& charLock, bool& escape, bool& save, bool& lo
 							cout << fileOutputName << "      ";
 						}
 
-						ofstream fileOutput(FILE_SAVE, ios::app);
-						fileOutput << endl << fileOutputName;
-						fileOutput.close();
+						vector <string> listFile;
+						fstream fileSave(FILE_SAVE, ios::in | ios::out);
+
+						while (!fileSave.eof()) {
+							string text;
+							getline(fileSave, text);
+							if (!text.empty())
+								listFile.push_back(text);
+						}
+							
+						if (find(listFile.begin(), listFile.end(), fileOutputName) == listFile.end()) {
+							fileSave.clear();
+							fileSave.seekp(0, ios::end);
+							fileSave << fileOutputName << endl;
+						}
+						fileSave.close();
 
 						fileName = fileOutputName;
 						save = true;
@@ -639,7 +653,7 @@ bool EndGame(Point snake[], Point gate[], Point food, int snakeSize, int speed, 
 // Bắt đầu game
 void StartGame(string fileName) {
 
-	bool continueGame = false;
+	bool continueGame;
 	
 	do {
 		Clrscr();
@@ -651,6 +665,7 @@ void StartGame(string fileName) {
 		bool inGate;
 		char charLock;
 		bool escape = false, save = false, load = false;
+		continueGame = false;
 
 		Init(snake, gate, food, direction, snakeSize, foodScore, level, speed, inGate, charLock, fileName);
 
@@ -685,20 +700,22 @@ void StartGame(string fileName) {
 			}
 		}
 
-		DeleteMessageBox();
-		DrawMessageBox();
-		GotoXY(32, 9); cout << "CONTINUE?";
-		GotoXY(27, 11); cout << "Yes (Y)       No (N)";
-		while (true) {
-			if (_kbhit()) {
-				char key = toupper(_getch());
-				if (key == 'Y') {
-					continueGame = true;
-					break;
-				}
-				else if (key == 'N') {
-					continueGame = false;
-					break;
+		if (!escape) {
+			DeleteMessageBox();
+			DrawMessageBox();
+			GotoXY(32, 9); cout << "CONTINUE?";
+			GotoXY(27, 11); cout << "Yes (Y)       No (N)";
+			while (true) {
+				if (_kbhit()) {
+					char key = toupper(_getch());
+					if (key == 'Y') {
+						continueGame = true;
+						break;
+					}
+					else if (key == 'N') {
+						continueGame = false;
+						break;
+					}
 				}
 			}
 		}

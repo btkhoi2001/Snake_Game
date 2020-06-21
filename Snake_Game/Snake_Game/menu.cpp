@@ -23,12 +23,7 @@ void DrawBorderMenu() {
 // Vẽ chữ Snake
 void DrawSnakeText() {
 
-	ifstream fileInput("text.txt");
-	if (fileInput.fail()) {
-		cout << "File does not exist";
-		Sleep(5000);
-		exit(0);
-	}
+	ifstream fileInput(FILE_TEXT);
 
 	int line = 2;
 	SetTextColor(CYAN_COLOR);
@@ -121,7 +116,7 @@ void DrawListFile(vector <List> listFile, int curChoice, int start, int end) {
 	GotoXY(42, 20); cout << "press Esc to go back";
 }
 
-// Vẽ load menu
+// Vẽ viền load menu
 void DrawBorderLoadMenu() {
 
 	SetTextColor(WHITE_COLOR);
