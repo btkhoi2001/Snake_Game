@@ -4,8 +4,7 @@
 
 #define SIZE_GATE 6
 #define MAX_SIZE_SNAKE 32
-#define MAXA_SIZE_FOOD 4
-#define MAX_SPEED 4
+#define MAX_SIZE_FOOD 4
 #define WIDTH_GAME 69
 #define HEIGHT_GAME 19
 #define FOOD_ICON (char)254

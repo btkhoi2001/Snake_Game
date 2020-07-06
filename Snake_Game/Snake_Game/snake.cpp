@@ -307,14 +307,13 @@ void DrawSnakeAndFood(Point snake[], Point gate[], Point& food, int& snakeSize, 
 		snake[snakeSize].x = snake[snakeSize - 1].x0;
 		snake[snakeSize].y = snake[snakeSize - 1].y0;
 		snakeSize++;
-		if (foodScore % 4 != 0)
+		if (foodScore % MAX_SIZE_FOOD != 0)
 			GenerateFood(snake, food, snakeSize);
 		else {
 			GenerateGate(snake, gate, snakeSize);
 			food.x = -1;
 			food.y = -1;
 		}
-		
 	}
 
 	if (food.x != -1 && food.y != -1) {
@@ -366,7 +365,7 @@ void MoveSnake(Point snake[], Point gate[], Point direction, int snakeSize, bool
 		if (snake[snakeSize - 1].x == gate[GATE_CENTER].x0 && snake[snakeSize - 1].y == gate[GATE_CENTER].y0)
 			inGate = true;
 
-		if (inGate && snake[snakeSize - 1].x == gate[GATE_CENTER].x0 && snake[snakeSize - 1].y == gate[GATE_CENTER].y0 && snake[0].x == gate[GATE_CENTER].x0 && snake[0].y == gate[GATE_CENTER].y0) {
+		if (inGate && snake[0].x == gate[GATE_CENTER].x0 && snake[0].y == gate[GATE_CENTER].y0) {
 			snake[0].x += direction.x;
 			snake[0].y += direction.y;
 		}
@@ -478,7 +477,7 @@ void GetKey(Point& direction, char& charLock, bool& escape, bool& save, bool& lo
 							}
 
 							GotoXY(24, 11);
-							cout << fileOutputName << "      ";
+							cout << fileOutputName << " ";
 						}
 
 						vector <string> listFile;
@@ -560,7 +559,7 @@ void GetKey(Point& direction, char& charLock, bool& escape, bool& save, bool& lo
 							}
 
 							GotoXY(24, 11);
-							cout << fileInputName << "      ";
+							cout << fileInputName << " ";
 						}
 
 						ifstream fileInput(fileInputName);

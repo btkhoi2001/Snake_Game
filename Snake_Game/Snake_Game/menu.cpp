@@ -229,6 +229,7 @@ void ShowAbout() {
 	GotoXY(32, 14); cout << "Luu Truong Duong                 19120489";
 	GotoXY(32, 15); cout << "Le Minh Hau                      19120502";
 	GotoXY(32, 16); cout << "Bach Thien Khoi                  19120549";
+	GotoXY(32, 18); cout << " Giao vien huong dan: Truong Toan Thinh";
 	GotoXY(42, 20); cout << "press Esc to go back";
 
 	while (true) {
